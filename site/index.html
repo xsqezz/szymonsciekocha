@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>Twoje IP — Szymon pozdrawia</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #171717;
+        background: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        display: grid;
+        min-height: 100vh;
+        margin: 0;
+        padding: 24px;
+        place-items: center;
+        background: #ffffff;
+      }
+
+      main {
+        width: min(100%, 900px);
+        text-align: center;
+      }
+
+      .message {
+        margin: 0;
+        font-size: clamp(1.7rem, 5vw, 3.4rem);
+        font-weight: 650;
+        line-height: 1.35;
+        letter-spacing: -0.035em;
+        overflow-wrap: anywhere;
+      }
+
+      #ip {
+        color: #2457d6;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .privacy-note {
+        margin: 28px 0 0;
+        color: #666666;
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="message">
+        Twoje IP to (<span id="ip" aria-live="polite">pobieram…</span>)<br />
+        Szymon pozdrawia i serdecznie dziękuję
+      </p>
+      <p class="privacy-note">
+        Adres jest pobierany przez zewnętrzną usługę api64.ipify.org.
+      </p>
+    </main>
+
+    <script>
+      async function showVisitorIp() {
+        const ipElement = document.getElementById("ip");
+
+        try {
+          const response = await fetch("https://api64.ipify.org?format=json", {
+            cache: "no-store",
+          });
+
+          if (!response.ok) {
+            throw new Error("IP service request failed");
+          }
+
+          const result = await response.json();
+          if (typeof result.ip !== "string" || result.ip.length > 64) {
+            throw new Error("IP service returned an invalid response");
+          }
+
+          ipElement.textContent = result.ip;
+        } catch {
+          ipElement.textContent = "nie udało się pobrać";
+        }
+      }
+
+      showVisitorIp();
+    </script>
+  </body>
+</html>
